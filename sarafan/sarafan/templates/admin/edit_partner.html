@@ -1,0 +1,59 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title">{{ title }}</h3>
+                </div>
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    <div class="card-body">
+                        <div class="form-group">
+                            {{ form.login.label_tag }}
+                            {{ form.login }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.password.label_tag }}
+                            {{ form.password }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.confirm_password.label_tag }}
+                            {{ form.confirm_password }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.salon_id.label_tag }}
+                            {{ form.salon_id }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.referral_link.label_tag }}
+                            {{ form.referral_link }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.clients_brought.label_tag }}
+                            {{ form.clients_brought }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.clients_received.label_tag }}
+                            {{ form.clients_received }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.partners_invited.label_tag }}
+                            {{ form.partners_invited }}
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
