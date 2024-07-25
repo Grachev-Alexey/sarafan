@@ -1,0 +1,63 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title">{{ title }}</h3>
+                </div>
+                <form method="POST" action="">
+                    {{ form.hidden_tag() }}
+                    <div class="card-body">
+<div class="form-group">
+    {{ form.login.label(class="form-label") }}
+    {{ form.login(class="form-control", value=user.username) }}
+</div>
+<div class="form-group">
+    {{ form.password.label(class="form-label") }}
+    {{ form.password(class="form-control") }}
+</div>
+<div class="form-group">
+    {{ form.confirm_password.label(class="form-label") }}
+    {{ form.confirm_password(class="form-control") }}
+</div>
+                        <div class="form-group">
+                            {{ form.salon_id.label(class="form-label") }}
+                            {{ form.salon_id(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.referral_link.label(class="form-label") }}
+                            {{ form.referral_link(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.clients_brought.label(class="form-label") }}
+                            {{ form.clients_brought(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.clients_received.label(class="form-label") }}
+                            {{ form.clients_received(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.partners_invited.label(class="form-label") }}
+                            {{ form.partners_invited(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.telegram_chat_id.label(class="form-label") }}
+                            {{ form.telegram_chat_id(class="form-control") }}
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

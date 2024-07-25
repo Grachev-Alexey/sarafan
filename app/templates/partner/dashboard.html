@@ -1,0 +1,224 @@
+{% extends 'partner/base.html' %}
+
+{% block title %}Личный кабинет партнера{% endblock %}
+
+{% block page_title %}Личный кабинет партнера{% endblock %}
+
+{% block content %}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <!-- Карточка с информацией о партнере -->
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Информация о партнере</h3>
+          </div>
+          <div class="card-body">
+            <dl class="row">
+              <dt class="col-sm-3">Название:</dt>
+              <dd class="col-sm-9">{{ salon.name }}</dd>
+
+              <dt class="col-sm-3">Тип партнера:</dt>
+              <dd class="col-sm-9">
+                {% if salon.partner_type == 'salon' %}
+                  Салон
+                {% else %}
+                  Частный мастер
+                {% endif %}
+              </dd>
+
+              {% if salon.owner %}
+                <dt class="col-sm-3">Владелец:</dt>
+                <dd class="col-sm-9">{{ salon.owner }}</dd>
+              {% endif %}
+
+              <dt class="col-sm-3">Категории:</dt>
+              <dd class="col-sm-9">
+                {% for category in salon.categories %}
+                  {{ category.name }}{% if not loop.last %}, {% endif %}
+                {% endfor %}
+              </dd>
+
+              <dt class="col-sm-3">Город:</dt>
+              <dd class="col-sm-9">{{ salon.city }}</dd>
+
+              <dt class="col-sm-3">Текст оффера:</dt>
+              <dd class="col-sm-9">{{ salon.discount }}</dd>
+
+              <dt class="col-sm-3">Контакты:</dt>
+              <dd class="col-sm-9">{{ salon.contacts }}</dd>
+            </dl>
+          </div>
+        </div>
+
+        <!-- Карточка со статистикой -->
+        <div class="card card-secondary">
+          <div class="card-header">
+            <h3 class="card-title">Статистика</h3>
+          </div>
+          <div class="card-body">
+            <dl class="row">
+              <dt class="col-sm-4">Приведено клиентов:</dt>
+              <dd class="col-sm-8">{{ partner.clients_brought }}</dd>
+
+              <dt class="col-sm-4">Получено клиентов:</dt>
+              <dd class="col-sm-8">{{ partner.clients_received }}</dd>
+
+              <dt class="col-sm-4">Приглашено партнеров:</dt>
+              <dd class="col-sm-8">{{ partner.partners_invited }}</dd>
+            </dl>
+          </div>
+        </div>
+
+        <!-- Карточка с реферальной ссылкой -->
+        <div class="card card-info">
+          <div class="card-header">
+            <h3 class="card-title">Реферальная ссылка</h3>
+          </div>
+          <div class="card-body d-flex justify-content-between align-items-center">
+            <p>{{ partner.referral_link }}</p>
+            <a href="{{ url_for('partner.qr_code') }}" class="btn btn-secondary">Скачать QR-код</a>
+          </div>
+        </div>
+
+        <!-- Карточка с формой редактирования -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Редактировать данные партнера</h3>
+          </div>
+          <div class="card-body">
+            <form method="POST" action="">
+              {{ edit_form.hidden_tag() }}
+              {{ edit_form.salon_id(value=salon.id) }}
+
+              <div class="form-group">
+                {{ edit_form.salon_name.label(class="form-control-label") }}
+                {{ edit_form.salon_name(class="form-control", value=salon.name, id="salon_name") }}
+              </div>
+
+              <div class="form-group">
+                {{ edit_form.partner_type.label(class="form-label") }}
+                {% for subfield in edit_form.partner_type %}
+                  <div class="form-check">
+                    {{ subfield(class="form-check-input") }}
+                    {{ subfield.label(class="form-check-label") }}
+                  </div>
+                {% endfor %}
+              </div>
+
+              <div class="form-group" id="owner-field" {% if salon.partner_type != 'individual' %}style="display: none;"{% endif %}>
+                {{ edit_form.owner.label(class="form-control-label") }}
+                {{ edit_form.owner(class="form-control", value=salon.owner) }}
+              </div>
+
+              <div class="form-group">
+                {{ edit_form.categories.label(class="form-label") }}
+                {{ edit_form.categories(class="form-control selectpicker", multiple=True, data_live_search="true", data_size="10", title="Выберите категории") }}
+              </div>
+
+              <div class="form-group">
+                {{ edit_form.city.label(class="form-label") }}
+                {{ edit_form.city(class="form-control selectpicker", data_live_search="true", title="Выберите город") }}
+              </div>
+
+              <div class="form-group">
+                {{ edit_form.discount.label(class="form-control-label") }}
+                {{ edit_form.discount(class="form-control", id="discount") }}
+              </div>
+
+              <div class="form-group">
+                {{ edit_form.contacts.label(class="form-control-label") }}
+                {{ edit_form.contacts(class="form-control", id="contacts") }}
+              </div>
+
+              <div class="form-group">
+                {{ edit_form.message_salon_name.label(class="form-control-label") }}
+                {{ edit_form.message_salon_name(class="form-control", value=salon.message_partner_name, id="message_salon_name") }}
+              </div>
+
+              <div class="form-group">
+                {{ edit_form.telegram_chat_id.label(class="form-label") }}
+                {{ edit_form.telegram_chat_id(class="form-control", value=partner.telegram_chat_id) }}
+              </div>
+
+              <div class="form-group">
+                {{ edit_form.submit(class="btn btn-primary") }}
+              </div>
+            </form>
+          </div>
+        </div>
+        
+<!-- Карточка с образцами сообщений -->
+<div class="card card-info">
+    <div class="card-header">
+        <h3 class="card-title">Образцы сообщений</h3>
+    </div>
+    <div class="card-body">
+        <h4>Сообщение о получении скидки:</h4>
+        <p id="get_discount_message">{{ sample_messages.get_discount_message }}</p>
+        <hr>
+        <h4>Предложение скидки:</h4>
+        <p id="discount_offer">{{ sample_messages.discount_offer }}</p>
+    </div>
+</div>
+
+        <!-- Карточка с приглашенными партнерами -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Приглашенные партнеры</h3>
+          </div>
+          <div class="card-body">
+            <ul>
+              {% for invited_partner in partner.invited_partners %}
+                <li>{{ invited_partner.salon.name }} - {{ invited_partner.salon.categories }}</li> 
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<script>
+  $(document).ready(function() {
+    // Получаем шаблоны сообщений из Flask
+    var getDiscountMessageTemplate = Handlebars.compile(`{{ get_discount_message_template }}`);
+    var discountOfferTemplate = Handlebars.compile(`{{ discount_offer_template }}`);
+
+    // Функция для обновления образцов сообщений
+function updateSampleMessages() {
+    var data = {
+        salonName: $('#salon_name').val(),
+        discount: $('#discount').val(),
+        contacts: $('#contacts').val(),
+        message_salon_name: $('#message_salon_name').val(),  // Изменили messageSalonName
+        categories: "{{ salon.categories|join(', ') }}" 
+    };
+
+    // Обновление HTML-кода в элементах
+    $('#get_discount_message').html(getDiscountMessageTemplate(data));
+    $('#discount_offer').html(discountOfferTemplate(data));
+}
+
+    // Вызов функции обновления при изменении полей формы
+    $('#salon_name, #discount, #contacts, #message_salon_name').on('input', updateSampleMessages);
+
+    // Вызываем функцию обновления при загрузке страницы, чтобы отобразить начальные образцы
+    updateSampleMessages();
+
+    // --- Код для selectpicker и partner_type из второго блока $(document).ready() ---
+    $('.selectpicker').selectpicker({
+      liveSearch: true,
+      size: 10
+    });
+
+    $('input[name="partner_type"]').change(function() {
+      if ($(this).val() === 'individual') {
+        $('#owner-field').show();
+      } else {
+        $('#owner-field').hide();
+      }
+    });
+  });
+</script>
+ 
+{% endblock %}

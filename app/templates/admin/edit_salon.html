@@ -1,0 +1,96 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title">{{ title }}</h3>
+                </div>
+                <form method="POST" action="">
+                    {{ form.hidden_tag() }}
+                    <div class="card-body">
+                        <div class="form-group">
+                            {{ form.id.label(class="form-label") }}
+                            {{ form.id(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.partner_type.label(class="form-label") }}
+                            {% for i, subfield in enumerate(form.partner_type) %}
+                                <div class="form-check">
+                                    {{ subfield(class="form-check-input", id="partner_type-" + i|string) }}
+                                    {{ subfield.label(class="form-check-label") }}
+                                </div>
+                                <div class="form-group" id="owner-field-{{ i }}" style="display: none;">
+                                    {{ form.owner.label(class="form-label") }}
+                                    {{ form.owner(class="form-control", id="owner-" + i|string) }}
+                                </div>
+                            {% endfor %} <div class="form-group">
+                            {{ form.categories.label(class="form-label") }}
+                            {{ form.categories(class="form-control selectpicker", multiple=True, data_live_search="true", data_size="10", title="Выберите категории") }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.name.label(class="form-label") }}
+                            {{ form.name(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.discount.label(class="form-label") }}
+                            {{ form.discount(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.city.label(class="form-label") }}
+                            {{ form.city(class="form-control selectpicker", data_live_search="true", title="Выберите город") }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.contacts.label(class="form-label") }}
+                            {{ form.contacts(class="form-control") }}
+                        </div>
+                        <div class="form-group form-check">
+                            {{ form.priority(class="form-check-input") }}
+                            {{ form.priority.label(class="form-check-label") }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.linked_partner_id.label(class="form-label") }}
+                            {{ form.linked_partner_id(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.message_partner_name.label(class="form-label") }}
+                            {{ form.message_partner_name(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.telegram_chat_id.label(class="form-label") }}
+                            {{ form.telegram_chat_id(class="form-control") }}
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('.selectpicker').selectpicker({
+            liveSearch: true,
+            size: 10
+        });
+
+        $('input[name="partner_type"]').change(function() {
+            // Скрываем все поля owner
+            $('[id^="owner-field-"]').hide();
+
+            // Показываем поле owner, соответствующее выбранному radio button
+            var index = $(this).index('input[name="partner_type"]');
+            $('#owner-field-' + index).show();
+        });
+    });
+</script>
+{% endblock %}
